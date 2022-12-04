@@ -16,12 +16,9 @@ using namespace emscripten;
 
 
 
-void performOperation(Image* ops, std::string operation);
-
 const char* imageIds_[10] = {".img1", ".img2", ".img3", ".img4", ".img5", ".img6", ".img7", ".img8", ".img9", ".img10" };
 json base64s_ = json::array();
 json imgIds_ = json::array({".img1", ".img2", ".img3", ".img4", ".img5", ".img6", ".img7", ".img8", ".img9", ".img10"});
-json response_ = json({});
 
 extern "C" {
 
@@ -32,28 +29,8 @@ extern "C" {
     void onmaskPressed();
     void onconvoBorderPressed();
     void onconvoZeroPressed();
-    void onencodePressed();
-    void ondecodePressed();
-    void onTest();
     void undo();
     
-    EM_JS(EM_VAL, dataURItoBlob, (), {
-        var byteString;
-        if(dataURI.split(',')[0].indexOf('base64') >= 0)
-            byteString = atob(dataURI.split(',')[1]);
-        else
-            byteString = unescape(dataURI.split(',')[1]);
-
-        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-        var ia = new Uint8Array(byteString.length);
-        for(var i = 0; i < byteString.length; i++)
-        {
-            ia[i] = byteString.charCodeAt(i);
-        }
-
-        return new Blob([ia], {type: mimeString});
-    });
-
 
     EM_JS(EM_VAL, getBase64StringFromDataURL, (std::string dataURL), {
         let d = dataURL.replace('data:', '').replace(/^.+,/, '');
@@ -101,7 +78,7 @@ extern "C" {
         
     });
 
-    EM_JS(void, updateElement, (const char* id, const char* base64), {
+    EM_JS(void, updateElement, (const char* id, const char* base64, const char* operations), {
 
         var byteString;
         var dataURI = UTF8ToString(base64);
@@ -127,6 +104,12 @@ extern "C" {
         var image = document.getElementById(UTF8ToString(id));
         let url = 'url( ' + objectURL  + ' )';
         image.style.backgroundImage = url;
+        let options = {};
+        options["title"] = "COMPLETION NOTIFICATION";
+        options["body"] = UTF8ToString(operations) + " OPERATION HAVE BEEN COMPLETED \n";
+        options["silent"] = false;
+        options["urgency"] = "normal";
+        window.API.showCustomNotification(options);
         
     });
     
@@ -143,7 +126,7 @@ extern "C" {
     img_->grayscale_avgs();
     std::string newImageBase64 = "data:image/png;base64," + img_->encodeByteString();
     delete img_;
-    updateElement(imageId, newImageBase64.c_str());
+    updateElement(imageId, newImageBase64.c_str(), "BLURAVG");
     
 }
 
@@ -158,7 +141,7 @@ void onblurLumPressed() {
     std::string newImageBase64 = "data:image/png;base64," + img_->encodeByteString();
     // std::cout << newImageBase64 << std::endl;
     delete img_;
-    updateElement(imageId, newImageBase64.c_str());
+    updateElement(imageId, newImageBase64.c_str(), "BLURLUM");
 
     
  }
@@ -174,7 +157,7 @@ void onflipXPressed() {
     std::string newImageBase64 = "data:image/png;base64," + img_->encodeByteString();
     // std::cout << newImageBase64 << std::endl;
     delete img_;
-    updateElement(imageId, newImageBase64.c_str());
+    updateElement(imageId, newImageBase64.c_str(), "FLIPX");
 
     
 }
@@ -190,7 +173,7 @@ void onflipYPressed() {
     std::string newImageBase64 = "data:image/png;base64," + img_->encodeByteString();
     // std::cout << newImageBase64 << std::endl;
     delete img_;
-    updateElement(imageId, newImageBase64.c_str());
+    updateElement(imageId, newImageBase64.c_str(), "FLIPY");
 
    
 }
@@ -206,7 +189,7 @@ void onmaskPressed() {
     std::string newImageBase64 = "data:image/png;base64," + img_->encodeByteString();
     // std::cout << newImageBase64 << std::endl;
     delete img_;
-    updateElement(imageId, newImageBase64.c_str());
+    updateElement(imageId, newImageBase64.c_str(), "COLOR_MASK");
 
     
 }
@@ -222,7 +205,7 @@ void onconvoBorderPressed() {
     std::string newImageBase64 = "data:image/png;base64," + img_->encodeByteString();
     // std::cout << newImageBase64 << std::endl;
     delete img_;
-    updateElement(imageId, newImageBase64.c_str());
+    updateElement(imageId, newImageBase64.c_str(), "CONVOLUTION_BORDER");
 
 
     
@@ -239,26 +222,10 @@ void onconvoZeroPressed() {
     std::string newImageBase64 = "data:image/png;base64," + img_->encodeByteString();
     // std::cout << newImageBase64 << std::endl;
     delete img_;
-    updateElement(imageId, newImageBase64.c_str());
+    updateElement(imageId, newImageBase64.c_str(), "CONVOLUTION_ZERO");
     
 }
 
-void onencodePressed() {
-    std::cout << "Encode Btn pressed\n"; 
-    
-}
-
-void ondecodePressed() {
-    std::cout << "Decode Btn pressed\n"; 
-    
-}
-
-
-void onTest() { 
-    std::cout << "Test Btn pressed\n"; 
-    
-    
-}
 
 void undo() { 
     std::cout << "Undo Btn pressed\n"; 
@@ -268,21 +235,12 @@ void undo() {
     if (img_ != nullptr && img_ != NULL){
         std::string newImageBase64 = "data:image/png;base64," + img_->encodeByteString();
         std::cout << "Found it...." << std::endl;
-        updateElement(imageId, newImageBase64.c_str());
+        updateElement(imageId, newImageBase64.c_str(), "UNDO");
     }else {
         std::cout << "Cannot restore because id cannot be found" << std::endl;
     }    
 }
 
-
-
-
-
-
-void performOperation(Image* ops, std::string operation){
-    
-
-}
 
 
 int main (){

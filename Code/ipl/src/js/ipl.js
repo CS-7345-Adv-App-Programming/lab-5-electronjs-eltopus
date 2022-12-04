@@ -1167,11 +1167,10 @@ var tempI64;
 var ASM_CONSTS = {
   
 };
-function dataURItoBlob() { var byteString; if(dataURI.split(',')[0].indexOf('base64') >= 0) byteString = atob(dataURI.split(',')[1]); else byteString = unescape(dataURI.split(',')[1]); var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]; var ia = new Uint8Array(byteString.length); for(var i = 0; i < byteString.length; i++) { ia[i] = byteString.charCodeAt(i); } return new Blob([ia], {type: mimeString}); }
 function getBase64StringFromDataURL(dataURL) { let d = dataURL.replace('data:', '').replace(/^.+,/, ''); return d; }
 function __asyncjs__getAllImages(id) { return Asyncify.handleAsync(async () => { var images, arr=[]; images = document.getElementById(UTF8ToString(id)); image = window.getComputedStyle(images).backgroundImage; arr.push(image.substr(5, image.length-7)); let b64 = await new Promise((resolve) => { fetch(arr[0]) .then((res) => res.blob()) .then((blob) => { const reader = new FileReader(); reader.onloadend = () => { const b = getBase64StringFromDataURL(reader.result); resolve(b); }; reader.readAsDataURL(blob); }).catch(error => console.warn(error)); }); var lengthBytes = lengthBytesUTF8(b64) + 1; var stringOnWasmHeap = _malloc(lengthBytes); stringToUTF8(b64, stringOnWasmHeap, lengthBytes); return stringOnWasmHeap; }); }
 function getActiveSelection() { let activeSelection = document.querySelector('.swiper-slide-active').id; var le = lengthBytesUTF8(activeSelection) + 1; var hea = _malloc(le); stringToUTF8(activeSelection, hea, le); return hea; }
-function updateElement(id,base64) { var byteString; var dataURI = UTF8ToString(base64); if(dataURI.split(',')[0].indexOf('base64') >= 0) byteString = atob(dataURI.split(',')[1]); else byteString = unescape(dataURI.split(',')[1]); var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]; var ia = new Uint8Array(byteString.length); for(var i = 0; i < byteString.length; i++) { ia[i] = byteString.charCodeAt(i); } var blob = new Blob([ia], {type: mimeString}); let objectURL = URL.createObjectURL(blob); var image = document.getElementById(UTF8ToString(id)); let url = 'url( ' + objectURL + ' )'; image.style.backgroundImage = url; }
+function updateElement(id,base64,operations) { var byteString; var dataURI = UTF8ToString(base64); if(dataURI.split(',')[0].indexOf('base64') >= 0) byteString = atob(dataURI.split(',')[1]); else byteString = unescape(dataURI.split(',')[1]); var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]; var ia = new Uint8Array(byteString.length); for(var i = 0; i < byteString.length; i++) { ia[i] = byteString.charCodeAt(i); } var blob = new Blob([ia], {type: mimeString}); let objectURL = URL.createObjectURL(blob); var image = document.getElementById(UTF8ToString(id)); let url = 'url( ' + objectURL + ' )'; image.style.backgroundImage = url; let options = {}; options["title"] = "COMPLETION NOTIFICATION"; options["body"] = UTF8ToString(operations) + " OPERATION HAVE BEEN COMPLETED \n"; options["silent"] = false; options["urgency"] = "normal"; window.API.showCustomNotification(options); }
 
 
 
@@ -5188,7 +5187,6 @@ var asmLibraryArg = {
   "__cxa_allocate_exception": ___cxa_allocate_exception,
   "__cxa_throw": ___cxa_throw,
   "abort": _abort,
-  "dataURItoBlob": dataURItoBlob,
   "emscripten_memcpy_big": _emscripten_memcpy_big,
   "emscripten_resize_heap": _emscripten_resize_heap,
   "environ_get": _environ_get,
@@ -5233,15 +5231,6 @@ var _onconvoBorderPressed = Module["_onconvoBorderPressed"] = createExportWrappe
 
 /** @type {function(...*):?} */
 var _onconvoZeroPressed = Module["_onconvoZeroPressed"] = createExportWrapper("onconvoZeroPressed");
-
-/** @type {function(...*):?} */
-var _onencodePressed = Module["_onencodePressed"] = createExportWrapper("onencodePressed");
-
-/** @type {function(...*):?} */
-var _ondecodePressed = Module["_ondecodePressed"] = createExportWrapper("ondecodePressed");
-
-/** @type {function(...*):?} */
-var _onTest = Module["_onTest"] = createExportWrapper("onTest");
 
 /** @type {function(...*):?} */
 var _undo = Module["_undo"] = createExportWrapper("undo");
@@ -5371,7 +5360,7 @@ var _asyncify_start_rewind = Module["_asyncify_start_rewind"] = createExportWrap
 var _asyncify_stop_rewind = Module["_asyncify_stop_rewind"] = createExportWrapper("asyncify_stop_rewind");
 
 var ___start_em_js = Module['___start_em_js'] = 23100;
-var ___stop_em_js = Module['___stop_em_js'] = 25163;
+var ___stop_em_js = Module['___stop_em_js'] = 25031;
 
 
 

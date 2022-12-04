@@ -6,7 +6,6 @@
 #include <vector>
 #include <iostream>
 #include <map>
-#include <iterator>
 
 
 template<class T>
@@ -20,9 +19,15 @@ class States {
         
         ~States(){
             std::cout << "Destructor called ......................." << std::endl;
-            // std::map<const char*, std::vector<T>> it;
-            // for (it = mapOfImages.begin(); it!=mapOfImages.end(); ++it)
-            //     delete (*it);
+            for(typename std::map<std::string, std::vector<T>>::const_iterator it = mapOfImages.begin(); it != mapOfImages.end(); it++){
+                //std::cout << "I am: " << it->first << std::endl;
+                std::vector<T> state = it->second;
+                if (state.size() > 0){
+                    for (auto s: state) {
+                        delete (*s);
+                    }
+                }
+            }
             
         }
         

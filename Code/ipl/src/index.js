@@ -7,33 +7,46 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const NOTIFICATION_TITLE = 'Basic Notification';
-const NOTIFICATION_BODY = 'This is custom notification';
+const NOTIFICATION_TITLE = 'Welcome';
+const NOTIFICATION_BODY = 'WQelcome to IPL v5.0.0';
 
 function showNotification() {
   new Notification({title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY}).show();
 }
 
+
+function showCustomNotification(options) {
+  options["icon"] = path.join(__dirname, 'images/icon.png');
+  new Notification(options).show();
+}
+
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 800,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
+    icon: 'images/icon.png',
   });
 
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
   
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   ipcMain.handle('openDevTools', () => {
     console.log("i got here from the inside......");
     mainWindow.webContents.openDevTools();
     showNotification();
+  });
+
+  ipcMain.handle('showCustomNotification', (event, options) => {
+    console.log("Attempting to show custom notification.....");
+    //console.log(options);
+    showCustomNotification(options);
   });
   
 };

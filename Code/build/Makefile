@@ -31,7 +31,7 @@ STATES = $(REPO_WORKING_DIR)/Code/states.cpp
 OUTPUT_JS = $(REPO_WORKING_DIR)/Code/ipl.js
 
 emcc:
-	emcc -sASYNCIFY  $(IMAGE_CPP) $(WASM_MAIN) $(STATES) -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS="['_onblurAvgPressed', '_onblurLumPressed', '_onflipXPressed', '_onflipYPressed', '_onmaskPressed', '_onconvoBorderPressed', '_onconvoZeroPressed', '_onencodePressed', '_ondecodePressed', '_onTest', '_undo', '_main']" -s EXPORTED_RUNTIME_METHODS=["ccall, cwrap, print, printErr"] -o $(EXAMPLE_OUTPUT)
+	emcc -sASYNCIFY  $(IMAGE_CPP) $(WASM_MAIN) $(STATES) -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS="['_onblurAvgPressed', '_onblurLumPressed', '_onflipXPressed', '_onflipYPressed', '_onmaskPressed', '_onconvoBorderPressed', '_onconvoZeroPressed', '_undo', '_main']" -s EXPORTED_RUNTIME_METHODS=["ccall, cwrap, print, printErr"] -o $(EXAMPLE_OUTPUT)
 compile:
 	g++ -std=c++17 -o main $(IMAGE_CPP) $(MAIN)
 

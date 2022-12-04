@@ -18,5 +18,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
   contextBridge.exposeInMainWorld('API', {
     openTools: () => ipcRenderer.invoke('openDevTools'),
-    exp: () => console.log("Exp in action")
+    showCustomNotification: (options) => {
+      //console.log(options)
+     ipcRenderer.invoke('showCustomNotification', options)
+    },
   })
